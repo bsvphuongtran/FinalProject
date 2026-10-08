@@ -1,0 +1,29 @@
+# Tài khoản và môi trường local
+.env
+
+# Bài tập và ghi chú, không đưa lên GitHub
+Automation _ Finnal Project.xlsx
+.~lock.Automation _ Finnal Project.xlsx#
+Yêu cầu.md
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Kết quả chạy test và báo cáo
+screenshots/
+videos/
+allure-results/
+allure-report/
+test-results/
+traces/
+*.webm
+*.png
+
+# File tạm khi dò trang và đọc Excel
+_probe.py
+_excel_dump.txt
+_page.html

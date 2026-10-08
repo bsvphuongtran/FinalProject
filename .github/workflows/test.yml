@@ -1,0 +1,49 @@
+name: UI tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run pytest
+        env:
+          HEADED: "false"
+          APP_URL: https://bsv-nhungnguyen.github.io/bai_tap_17082026.html
+          ADMIN_ID: admin
+          ADMIN_PASSWORD: admin123
+          GUEST_ID: guest
+          GUEST_PASSWORD: guest123
+          PYTHONUTF8: "1"
+        run: python -m pytest
+
+      - name: Install Allure
+        if: always()
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-jre
+          curl -sSL -o allure.tgz https://github.com/allure-framework/allure2/releases/download/2.32.0/allure-2.32.0.tgz
+          tar -xzf allure.tgz
+          sudo mv allure-2.32.0 /opt/allure
+          sudo ln -sf /opt/allure/bin/allure /usr/local/bin/allure
+          allure generate allure-results -o allure-report --clean
+
+      - name: Upload Allure report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report
+          path: allure-report/
