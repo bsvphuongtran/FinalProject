@@ -13,8 +13,12 @@ from constants import messages
 from helpers import description_md
 from helpers.sample_files import write_sample
 from pages.support_app import SupportApp
+import os
 
-APP_URL = "https://bsv-nhungnguyen.github.io/bai_tap_17082026.html"
+# APP_URL = "https://bsv-nhungnguyen.github.io/bai_tap_17082026.html"
+APP_URL = os.getenv("APP_URL")
+
+###NNTT: em nghĩ nên sử dụng thống nhất URL ở 1 nguồn duy nhất để dễ quản lý và maintain (.env)
 
 
 def _passed(summary: str) -> None:
@@ -33,6 +37,8 @@ def _passed(summary: str) -> None:
     """
 )
 class TestTestcases:
+###NNTT: nên chia thành nhiều file testcase để dễ quản lý và dễ đọc, dễ maintain (có thể chia theo Screen Name hoặc Category)
+### Em nghĩ lý tưởng nhất là mỗi file test chỉ nên chứa tầm 500 lines code.
     """Mỗi hàm tương ứng một dòng trên sheet Testcases."""
 
     # Back/forward: trang không gọi history.pushState, spec không nói state nào phải còn.
@@ -480,11 +486,13 @@ class TestTestcases:
         """
     )
     def test_gd033_02_logout_in_one_browser_invalidates_the_other(
-        self, admin_app: SupportApp, second_app: SupportApp
+        self, admin_app: SupportApp, second_app: SupportApp, request: pytest.FixtureRequest
     ) -> None:
         admin_app.header.open_user_menu()
         admin_app.header.click_logout()
         admin_app.login.expect_login_screen()
+        # NNTT: trường hợp case mở nhiều tab thì nên có step gọi sang tab khác để check -> mục đích để khi phát sinh lỗi thì có thể chụp màn hình đúng vị trí lỗi. 
+        request.node._evidence_page = second_app.page
         second_app.header.open_tab("統計")
         second_app.login.expect_login_screen()
         _passed("Logout in browser A requires browser B to log in again")
